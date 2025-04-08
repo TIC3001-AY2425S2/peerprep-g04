@@ -4,6 +4,9 @@ import cors from "cors";
 import userRoutes from "./routes/user-routes.js";
 import authRoutes from "./routes/auth-routes.js";
 import questionRoutes from "./routes/question-routes.js"
+import matchRoutes from "./routes/match.js";
+
+
 
 const app = express();
 
@@ -11,6 +14,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors()); // config cors so that front-end can use
 app.options("*", cors());
+
+// ✅ JSON body parser
+app.use(express.json());
+
+// ✅ Routes
+app.use("/api", matchRoutes);
+app.use("/api/auth", authRoutes);
 
 // To handle CORS Errors
 app.use((req, res, next) => {
