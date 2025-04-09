@@ -7,8 +7,12 @@ import { connectToDB } from "./model/repository.js";
 import matchRoutes from "./routes/match.js";
 import authRoutes from "./routes/auth-routes.js";
 
+<<<<<<< HEAD
 const app = express();
 const port = process.env.PORT || 3001;
+=======
+const port = process.env.PORT || 3000;
+>>>>>>> 2b008fe3b4382d372e9f4cdf834a91f152423916
 
 // ✅ CORS middleware (very top and well configured)
 app.use(cors({

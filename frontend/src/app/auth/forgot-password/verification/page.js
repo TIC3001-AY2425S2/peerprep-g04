@@ -21,8 +21,9 @@ export default function VerificationPage() {
     e.preventDefault();
     setLoading(true);
     try {
+
       //verify of OTP input is the correct one
-      await axios.post("http://localhost:3001/api/auth/verifyOTP", {email, verificationCode,});
+      await axios.post("http://localhost:3000/api/auth/verifyOTP", {email, verificationCode,});
 
       //direct to reset password page if OTP pass
       //set redirect path
@@ -34,6 +35,7 @@ export default function VerificationPage() {
       // If redirect isn't done yet, show redirecting
       setLoadingText("Redirecting...");
       await redirect;
+
     } catch (error) {
       alert(error.response?.data?.message || "Failed to verified");
     } finally {

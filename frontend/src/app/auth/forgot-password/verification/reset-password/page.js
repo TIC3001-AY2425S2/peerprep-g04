@@ -26,8 +26,9 @@ export default function ResetPasswordPage() {
         }
         setLoading(true);
         try {
+
             //update new password
-            await axios.post("http://localhost:3001/api/auth/forgot-password/verification/reset-password", {id:userId, password, confirmPassword });
+            await axios.post("http://localhost:3000/api/auth/forgot-password/verification/reset-password", {id:userId, password, confirmPassword });
 
             
             //redirect to login page
@@ -40,6 +41,7 @@ export default function ResetPasswordPage() {
             // If redirect isn't done yet, show redirecting
             setLoadingText("Redirecting...");
             await redirect;
+
         } catch (error) {
             console.log('error'+error);
             alert(error.response?.data?.message || "Failed to update password");
