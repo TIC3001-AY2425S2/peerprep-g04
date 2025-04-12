@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 async function connectToDB() {
-  const uri = 'mongodb://localhost:27017/PeerPrep'; 
+  const uri = "mongodb+srv://peerprep:peerprep@cluster0.143cd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; 
   try {
     await mongoose.connect(uri, {
       useNewUrlParser: true,
