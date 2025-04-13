@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/-9a38Lm0)
 # TIC3001 Project
 
 ## User Service
@@ -12,3 +13,6 @@
 6. If the server starts successfully, you will see a "User service server listening on ..." message.
 
 ### Complete User Service Guide: [User Service Guide](./user-service/README.md)
+
+### Run in docker
+  Run the cmd : docker-compose up --build

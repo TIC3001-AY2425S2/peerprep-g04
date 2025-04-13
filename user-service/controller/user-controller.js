@@ -15,6 +15,7 @@ import {
 export async function createUser(req, res) {
   try {
     const { username, email, password } = req.body;
+
     if (username && email && password) {
       const existingUser = await _findUserByUsernameOrEmail(username, email);
       if (existingUser) {
@@ -67,6 +68,29 @@ export async function getAllUsers(req, res) {
   }
 }
 
+
+/**Find user by email (validate user email if exist)*/
+export async function findUserByEmail(req, res) {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  try {
+    const user = await _findUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ message: "User found", data: { id: user._id, email: user.email } });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
 export async function updateUser(req, res) {
   try {
     const { username, email, password } = req.body;
@@ -109,6 +133,49 @@ export async function updateUser(req, res) {
   }
 }
 
+
+
+
+/**update password*/
+export async function updateUserPassword(req, res) {
+  console.log("Password reset endpoint hit");
+  const { id, password, confirmPassword } = req.body;
+
+  if (!id || !password || !confirmPassword) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+  
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "Passwords do not match" });
+  }
+
+  try {
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    const user = await _findUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
+  
+}
+
+
+
 export async function updateUserPrivilege(req, res) {
   try {
     const { isAdmin } = req.body;
@@ -147,12 +214,40 @@ export async function deleteUser(req, res) {
     if (!user) {
       return res.status(404).json({ message: `User ${userId} not found` });
     }
-
+    
     await _deleteUserById(userId);
     return res.status(200).json({ message: `Deleted user ${userId} successfully` });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Unknown error when deleting user!" });
+  }
+}
+
+
+export async function seedDefaultUser(req, res) {
+  try {
+    const username = "admin";
+    const email = "admin@gmail.com";
+    const password = "admin";
+    const isAdmin = true;
+
+    const existingUser = await _findUserByUsernameOrEmail(username, email);
+    if (existingUser) {
+      console.log('user exist');
+      return res.status(200).json({ message: "User already exists" });
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+    const createdUser = await _createUser(username, email, hashedPassword, isAdmin);
+
+    return res.status(201).json({
+      message: "Seeded default admin user",
+      data: formatUserResponse(createdUser),
+    });
+  } catch (err) {
+    console.log("Seeding failed:", err);
+    return res.status(500).json({ message: "Seeding error", detail: err.message });
   }
 }
 
